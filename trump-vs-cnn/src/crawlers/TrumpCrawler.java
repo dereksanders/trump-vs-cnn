@@ -27,12 +27,12 @@ public class TrumpCrawler extends Crawler<TrumpTweet> {
 		int currentIndex = 0;
 		String timeClass = "";
 
+		int tweetNum = 1;
+
 		while (timeClass != null) {
 
 			String tweetTime = "";
 			String tweetText = "";
-
-			int tweetNum = 1;
 
 			String timeContainerBeginTag = "<small class=\"time\">";
 			String timeContainerEndTag = "</small>";
@@ -41,7 +41,15 @@ public class TrumpCrawler extends Crawler<TrumpTweet> {
 			int timeClassBegin = rawInput.indexOf(timeContainerBeginTag, currentIndex) + timeContainerBeginTag.length();
 			int timeClassEnd = rawInput.indexOf(timeContainerEndTag, timeClassBegin);
 
-			currentIndex = timeClassBegin;
+			if (timeClassBegin == -1 + timeContainerBeginTag.length()) {
+
+				// Reached the end of the source.
+				break;
+
+			} else {
+
+				currentIndex = timeClassBegin;
+			}
 
 			try {
 
@@ -112,7 +120,13 @@ public class TrumpCrawler extends Crawler<TrumpTweet> {
 
 			tweets.add(new TrumpTweet(tweetTimeEpoch, tweetText));
 
+			System.out.println("currentIndex:" + currentIndex + " : " + rawInput.length());
+
 			tweetNum++;
+		}
+
+		if (Main.DEBUG) {
+			System.out.println("Number of tweets parsed: " + tweetNum);
 		}
 
 		return tweets;

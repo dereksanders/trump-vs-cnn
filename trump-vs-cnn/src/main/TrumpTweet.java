@@ -9,5 +9,13 @@ public class TrumpTweet {
 
 	public TrumpTweet(LocalDateTime time, String text) {
 
+		this.time = time;
+		this.text = text;
+	}
+
+	@Override
+	public String toString() {
+
+		return "@realDonaldTrump at " + time + ":\n" + text;
 	}
 }

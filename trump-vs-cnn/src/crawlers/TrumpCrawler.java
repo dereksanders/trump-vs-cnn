@@ -64,7 +64,7 @@ public class TrumpCrawler extends Crawler<TrumpTweet> {
 				tweetTime = rawInput.toString().substring(timestampBegin, rawInput.indexOf("\"", currentIndex));
 
 				if (Main.DEBUG) {
-					System.out.println(tweetTime);
+					System.out.println("Tweet Time:\n" + tweetTime);
 				}
 
 			} catch (IndexOutOfBoundsException e) {
@@ -82,17 +82,15 @@ public class TrumpCrawler extends Crawler<TrumpTweet> {
 			// class="js-tweet-text-container"> and then between <p class=*> and </p> will
 			// be the text.
 			String textContainerBeginTag = "<div class=\"js-tweet-text-container\">";
-			String textContainerEndTag = "</div>";
 
 			int textContainerBegin = rawInput.indexOf(textContainerBeginTag, currentIndex)
 					+ textContainerBeginTag.length();
-			int textContainerEnd = rawInput.indexOf(textContainerEndTag, timeClassBegin);
 
 			currentIndex = textContainerBegin;
 
-			int tweetTextBegin = rawInput.indexOf(">", textContainerEnd) + 1;
+			int tweetTextBegin = rawInput.indexOf(">", textContainerBegin) + 1;
 
-			String tweetTextEndTag = "</p>";
+			String tweetTextEndTag = "<";
 
 			try {
 
@@ -100,7 +98,7 @@ public class TrumpCrawler extends Crawler<TrumpTweet> {
 						rawInput.indexOf(tweetTextEndTag, tweetTextBegin));
 
 				if (Main.DEBUG) {
-					System.out.println(tweetText);
+					System.out.println("Tweet Text:\n" + tweetText);
 				}
 
 			} catch (IndexOutOfBoundsException e) {

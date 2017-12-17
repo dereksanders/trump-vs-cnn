@@ -71,10 +71,11 @@ public abstract class Crawler<G> {
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Could not close reader for webpage: " + this.getWebpage());
+			System.exit(1);
 		}
 
 		return rawInput;
 	}
 
-	public abstract void crawl();
+	public abstract ArrayList<G> crawl();
 }

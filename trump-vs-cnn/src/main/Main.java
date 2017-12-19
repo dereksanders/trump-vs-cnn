@@ -81,7 +81,7 @@ public class Main {
 		}
 		allArticles.append("]}");
 
-		writeFile(allArticles.toString(), "articles.json");
+		writeFile(allArticles.toString(), "trumpArticles.json");
 	}
 
 	private static void writeFile(String text, String filename) {

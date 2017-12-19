@@ -62,6 +62,26 @@ public class Main {
 		allTweets.append("]}");
 
 		writeFile(allTweets.toString(), "trumpTweets.json");
+
+		StringBuilder allArticles = new StringBuilder(articles.size() * 100);
+
+		allArticles.append("{\n");
+		allArticles.append("\t\"articles\":[\n");
+
+		for (int i = 0; i < articles.size(); i++) {
+
+			allArticles.append("\t\t");
+			allArticles.append(articles.get(i).toString());
+
+			if (i < articles.size() - 1) {
+				allArticles.append(",\n");
+			} else {
+				allArticles.append("\n");
+			}
+		}
+		allArticles.append("]}");
+
+		writeFile(allArticles.toString(), "articles.json");
 	}
 
 	private static void writeFile(String text, String filename) {

@@ -1,6 +1,7 @@
 package crawlers;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import main.CNNArticle;
@@ -25,13 +26,19 @@ public class CNNCrawler extends Crawler<CNNArticle> {
 
 		// First look for "articleList". Then parse each item in the list.
 
-		String articleListBeginTag = "{articleList:[";
+		String articleListBeginTag = "{\"articleList\":[";
 		String articleListEndTag = "]}";
 
 		int articleListBegin = rawInput.indexOf(articleListBeginTag);
-		int articleListEnd = rawInput.indexOf(articleListEndTag);
-
+		int articleListEnd = rawInput.indexOf(articleListEndTag, articleListBegin);
 		int currentIndex = articleListBegin + articleListBeginTag.length();
+
+		if (Main.DEBUG) {
+
+			System.out.println("Article list begin: " + articleListBegin);
+			System.out.println("Article list end: " + articleListEnd);
+			System.out.println("Current index: " + currentIndex);
+		}
 
 		String articleList = rawInput.toString().substring(currentIndex, articleListEnd);
 
@@ -40,21 +47,39 @@ public class CNNCrawler extends Crawler<CNNArticle> {
 		String nextArticleStartTag = "{";
 		String nextArticleEndTag = "}";
 
+		// currentIndex now needs to refer to articleList and not rawInput.
+		currentIndex = 0;
+
 		int nextArticleStart = articleList.indexOf(nextArticleStartTag, currentIndex);
+
+		if (Main.DEBUG) {
+
+			System.out.println("Next article start: " + nextArticleStart);
+		}
 
 		while (nextArticleStart != -1) {
 
 			currentIndex = nextArticleStart + 1;
 
 			String currentArticle = articleList.substring(nextArticleStart,
-					articleList.indexOf(articleListEndTag, currentIndex));
+					articleList.indexOf(nextArticleEndTag, currentIndex));
 
 			String linkBeginTag = "\"uri\":\"";
-			int linkBegin = articleList.indexOf(linkBeginTag, currentIndex) + linkBeginTag.length();
+			int linkBegin = currentArticle.indexOf(linkBeginTag, currentIndex) + linkBeginTag.length();
+
+			currentIndex = linkBegin;
+
+			String linkEndTag = "\"";
+			int linkEnd = currentArticle.indexOf(linkEndTag, currentIndex);
+
+			if (Main.DEBUG) {
+				System.out.println("linkBegin: " + linkBegin);
+				System.out.println("linkEnd: " + linkEnd);
+			}
 
 			String link = "";
 			try {
-				link = articleList.substring(linkBegin, articleList.indexOf("\""));
+				link = currentArticle.substring(linkBegin, linkEnd);
 			} catch (IndexOutOfBoundsException e) {
 				e.printStackTrace();
 				System.out.println("Could not find link to article.");
@@ -66,11 +91,16 @@ public class CNNCrawler extends Crawler<CNNArticle> {
 			}
 
 			String headlineBeginTag = "\"headline\":\"";
-			int headlineBegin = articleList.indexOf(headlineBeginTag, currentIndex) + headlineBeginTag.length();
+			int headlineBegin = currentArticle.indexOf(headlineBeginTag, currentIndex) + headlineBeginTag.length();
+
+			currentIndex = headlineBegin;
+
+			String headlineEndTag = "\"";
+			int headlineEnd = currentArticle.indexOf(headlineEndTag, currentIndex);
 
 			String headline = "";
 			try {
-				headline = articleList.substring(headlineBegin, articleList.indexOf("\""));
+				headline = currentArticle.substring(headlineBegin, headlineEnd);
 			} catch (IndexOutOfBoundsException e) {
 				e.printStackTrace();
 				System.out.println("Could not find headline of article.");
@@ -103,12 +133,14 @@ public class CNNCrawler extends Crawler<CNNArticle> {
 
 			if (headline.contains(this.keyword)) {
 
-				CNNArticle current = new CNNArticle(link, null, typeBeginTag, null, null);
+				CNNArticle current = new CNNArticle(link, LocalDate.now(), headline, type);
+				articles.add(current);
 				articleNum++;
 			}
 
-			nextArticleStart = articleList.indexOf(nextArticleStartTag, currentIndex);
+			nextArticleStart = articleList.indexOf(nextArticleStartTag, nextArticleStart + 1);
 		}
+		System.out.println("Found " + articleNum + " articles about " + this.keyword);
 
 		return articles;
 	}

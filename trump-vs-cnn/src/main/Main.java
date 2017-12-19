@@ -29,18 +29,28 @@ public class Main {
 
 		ArrayList<Tweet> tweets = trumpTweets.crawl();
 
+		// Roughly large enough to contain many lengthy tweets. Doesn't take into
+		// consideration the space taken up by a tweet's user or date but it's unlikely
+		// that every tweet will be max length.
 		StringBuilder allTweets = new StringBuilder(tweets.size() * MAX_TWEET_LENGTH);
 
-		for (Tweet t : tweets) {
+		allTweets.append("{\n");
+		allTweets.append("\t\"tweets\":[\n");
 
-			allTweets.append(t.toString());
-			allTweets.append("\n\n");
+		for (int i = 0; i < tweets.size(); i++) {
+
+			allTweets.append("\t\t");
+			allTweets.append(tweets.get(i).toString());
+
+			if (i < tweets.size() - 1) {
+				allTweets.append(",\n");
+			} else {
+				allTweets.append("\n");
+			}
 		}
+		allTweets.append("]}");
 
-		// Get rid of trailing endlines.
-		allTweets.substring(0, allTweets.lastIndexOf("\n\n"));
-
-		writeFile(allTweets.toString(), "trumpTweets.txt");
+		writeFile(allTweets.toString(), "trumpTweets.json");
 	}
 
 	private static void writeFile(String text, String filename) {

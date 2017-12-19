@@ -1,7 +1,6 @@
 package main;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class CNNArticle {
 
@@ -15,11 +14,25 @@ public class CNNArticle {
 	private String headline;
 	private Type type;
 
-	// The 'last updated' time is only available from the page of the article and
-	// not the homepage.
-	private LocalDateTime lastUpdated;
+	public CNNArticle(String link, LocalDate date, String headline, Type type) {
 
-	public CNNArticle(String link, LocalDate date, String headline, Type type, LocalDateTime lastUpdated) {
-
+		this.link = link;
+		this.date = date;
+		this.headline = headline;
+		this.type = type;
 	}
+
+	@Override
+	public String toString() {
+
+		String desc = "{";
+
+		desc += "\"link\":\"" + this.link + "\"," + "\"headline\":\"" + this.headline + "\"," + "\"type\":\""
+				+ this.type + "\"," + "\"date\":\"" + this.date + "\"";
+
+		desc += "}";
+
+		return desc;
+	}
+
 }

@@ -6,18 +6,21 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 
 import main.Main;
-import main.TrumpTweet;
+import main.Tweet;
 
-public class TrumpCrawler extends Crawler<TrumpTweet> {
+public class TweetCrawler extends Crawler<Tweet> {
 
-	public TrumpCrawler(URL webpage) {
+	private String user;
+
+	public TweetCrawler(URL webpage, String user) {
 		super(webpage);
+		this.user = user;
 	}
 
 	@Override
-	public ArrayList<TrumpTweet> crawl() {
+	public ArrayList<Tweet> crawl() {
 
-		ArrayList<TrumpTweet> tweets = new ArrayList<>();
+		ArrayList<Tweet> tweets = new ArrayList<>();
 
 		StringBuilder rawInput = this.loadWebpageSource();
 
@@ -118,7 +121,7 @@ public class TrumpCrawler extends Crawler<TrumpTweet> {
 				System.exit(1);
 			}
 
-			tweets.add(new TrumpTweet(tweetTimeEpoch, tweetText));
+			tweets.add(new Tweet(this.user, tweetTimeEpoch, tweetText));
 
 			System.out.println("currentIndex:" + currentIndex + " : " + rawInput.length());
 

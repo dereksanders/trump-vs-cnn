@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
+import crawlers.CNNCrawler;
 import crawlers.TweetCrawler;
 
 public class Main {
@@ -15,11 +16,14 @@ public class Main {
 
 	private static final String TRUMP_USER = "@realDonaldTrump";
 	private static final String TRUMP_TWITTER = "https://twitter.com/realdonaldtrump";
+	private static final String CNN_LINK = "http://www.cnn.com/";
+	private static final String CNN_KEYWORD = "Trump";
 	private static final int MAX_TWEET_LENGTH = 280;
 
 	public static void main(String[] args) {
 
 		TweetCrawler trumpTweets = null;
+		CNNCrawler trumpArticles = null;
 
 		try {
 			trumpTweets = new TweetCrawler(new URL(TRUMP_TWITTER), TRUMP_USER);
@@ -27,7 +31,14 @@ public class Main {
 			e.printStackTrace();
 		}
 
+		try {
+			trumpArticles = new CNNCrawler(new URL(CNN_LINK), CNN_KEYWORD);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+
 		ArrayList<Tweet> tweets = trumpTweets.crawl();
+		ArrayList<CNNArticle> articles = trumpArticles.crawl();
 
 		// Roughly large enough to contain many lengthy tweets. Doesn't take into
 		// consideration the space taken up by a tweet's user or date but it's unlikely
